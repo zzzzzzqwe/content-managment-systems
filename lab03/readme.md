@@ -56,7 +56,7 @@ define('WP_DEBUG', true);
 | `show_in_rest` | `true` | Поддержка REST API и блочного редактора Gutenberg |
 | `supports` | `title, editor, author, thumbnail` | Поля, доступные в редакторе записи |
 | `menu_icon` | `dashicons-edit-page` | Иконка в меню админки |
-| `rewrite` | `['slug' => 'notes']` | ЧПУ-адрес: `/notes/` |
+| `rewrite` | `['slug' => 'notes']` | Адрес: `/notes/` |
 
 После сохранения файла в админке появился новый пункт меню **Notes**.
 
@@ -84,9 +84,9 @@ define('WP_DEBUG', true);
 
 **Особенности реализации:**
 
-1. **HTML-поле** — используется `<input type="date">` с атрибутом `required`.
+1. **HTML-поле** - используется `<input type="date">` с атрибутом `required`.
 
-2. **Безопасность (nonce)** — при рендере метабокса создаётся nonce-поле:
+2. **Безопасность (nonce)** - при рендере метабокса создаётся nonce-поле:
 ```php
 wp_nonce_field( 'usm_save_due_date', 'usm_due_date_nonce' );
 ```
@@ -97,7 +97,7 @@ if ( ! wp_verify_nonce( $_POST['usm_due_date_nonce'], 'usm_save_due_date' ) ) {
 }
 ```
 
-3. **Валидация даты** — дата не может быть в прошлом. Если дата невалидна, сообщение об ошибке сохраняется в transient и выводится через хук `admin_notices`:
+3. **Валидация даты** - дата не может быть в прошлом. Если дата невалидна, сообщение об ошибке сохраняется в transient и выводится через хук `admin_notices`:
 
 ```php
 if ( $date < current_time( 'Y-m-d' ) ) {
@@ -106,7 +106,7 @@ if ( $date < current_time( 'Y-m-d' ) ) {
 }
 ```
 
-4. **Колонка в списке записей** — дата напоминания отображается в отдельной колонке «Due Date» на странице списка заметок. Колонка реализована через фильтры `manage_usm_note_posts_columns` и `manage_usm_note_posts_custom_column`. Также колонка сделана сортируемой.
+4. **Колонка в списке записей** - дата напоминания отображается в отдельной колонке «Due Date» на странице списка заметок. Колонка реализована через фильтры `manage_usm_note_posts_columns` и `manage_usm_note_posts_custom_column`. Также колонка сделана сортируемой.
 
 ![image](screenshots/Screenshot_5.png)
 
@@ -123,25 +123,25 @@ if ( $date < current_time( 'Y-m-d' ) ) {
 ### Шаг 6. Создание шорткода для отображения заметок
 
 Создал шорткод `[usm_notes]` с двумя необязательными атрибутами:
-- `priority` — фильтр по slug приоритета (например, `high`)
-- `before_date` — фильтр по дате напоминания (формат `YYYY-MM-DD`)
+- `priority` - фильтр по slug приоритета (например, `high`)
+- `before_date` - фильтр по дате напоминания (формат `YYYY-MM-DD`)
 
 **Логика работы:**
 - Используется `WP_Query` для получения записей типа `usm_note`
-- Если указан `priority` — добавляется `tax_query` по таксономии `usm_priority`
-- Если указан `before_date` — добавляется `meta_query` по ключу `_usm_due_date` с оператором `<=`
-- Если записей нет — выводится сообщение: «Нет заметок с заданными параметрами»
+- Если указан `priority` - добавляется `tax_query` по таксономии `usm_priority`
+- Если указан `before_date` - добавляется `meta_query` по ключу `_usm_due_date` с оператором `<=`
+- Если записей нет - выводится сообщение: «Нет заметок с заданными параметрами»
 
 **Стилизация:** карточки заметок оформлены с помощью CSS Grid. Приоритеты отображаются цветными бейджами:
-- **High** — красный
-- **Medium** — жёлтый
-- **Low** — зелёный
+- **High** - красный
+- **Medium** - жёлтый
+- **Low** - зелёный
 
 Примеры использования:
 ```
-[usm_notes]                              — все заметки
-[usm_notes priority="high"]              — только с высоким приоритетом
-[usm_notes before_date="2026-04-30"]     — с датой до 30 апреля 2026
+[usm_notes]                              - все заметки
+[usm_notes priority="high"]              - только с высоким приоритетом
+[usm_notes before_date="2026-04-30"]     - с датой до 30 апреля 2026
 ```
 
 ![image](screenshots/Screenshot_8.png)
@@ -160,21 +160,21 @@ if ( $date < current_time( 'Y-m-d' ) ) {
 
 **Таксономия** - это система классификации, предназначенная для группировки записей по общему признаку. Она создаёт отдельные страницы архивов, поддерживает иерархию и позволяет эффективно фильтровать записи.
 
-**Метаполе (post meta)** — это произвольное значение, привязанное к конкретной записи. Оно хранится в таблице `wp_postmeta` как пара ключ-значение и предназначено для уникальных данных записи.
+**Метаполе (post meta)** - это произвольное значение, привязанное к конкретной записи. Оно хранится в таблице `wp_postmeta` как пара ключ-значение и предназначено для уникальных данных записи.
 
 ### 2. Зачем нужен nonce при сохранении метаполей?
 
-**Nonce** (Number used once) — это токен безопасности, защищающий от **CSRF-атак** (Cross-Site Request Forgery). При рендере формы WordPress генерирует уникальный токен с помощью `wp_nonce_field()`, а при обработке данных проверяет его через `wp_verify_nonce()`.
+**Nonce** (Number used once) - это токен безопасности, защищающий от **CSRF-атак** (Cross-Site Request Forgery). При рендере формы WordPress генерирует уникальный токен с помощью `wp_nonce_field()`, а при обработке данных проверяет его через `wp_verify_nonce()`.
 
 **Если nonce не проверять**, злоумышленник может создать вредоносную страницу, которая отправит POST-запрос к WordPress от имени авторизованного пользователя.
 
 ### 3. Какие аргументы register_post_type() и register_taxonomy() чаще всего важны для фронтенда и UX?
 
-1. **`public`** — определяет, будет ли CPT/таксономия доступна на фронтенде и в поиске. Если `false`, записи не будут отображаться для посетителей сайта. Это главный параметр, влияющий на видимость контента.
+1. **`public`** - определяет, будет ли CPT/таксономия доступна на фронтенде и в поиске. Если `false`, записи не будут отображаться для посетителей сайта. Это главный параметр, влияющий на видимость контента.
 
-2. **`has_archive`** (для CPT) — включает архивную страницу (например, `/notes/`), где отображаются все записи данного типа. Без этого параметра пользователи смогут просматривать только отдельные записи, но не их общий список.
+2. **`has_archive`** (для CPT) - включает архивную страницу (например, `/notes/`), где отображаются все записи данного типа. Без этого параметра пользователи смогут просматривать только отдельные записи, но не их общий список.
 
-3. **`rewrite`** — настраивает ЧПУ (человеко-понятные URL). Параметр `slug` определяет часть URL (например, `notes` вместо `usm_note`). Правильный slug важен для SEO и удобства навигации.
+3. **`rewrite`** - настраивает url. Параметр `slug` определяет часть URL (например, `notes` вместо `usm_note`). Правильный slug важен для SEO и удобства навигации.
 
 ## Инструкции по запуску
 
@@ -186,9 +186,9 @@ if ( $date < current_time( 'Y-m-d' ) ) {
 
 ## Список использованных источников
 
-1. WordPress Developer Resources — Custom Post Types: https://developer.wordpress.org/plugins/post-types/
-2. WordPress Developer Resources — Taxonomies: https://developer.wordpress.org/plugins/taxonomies/
-3. WordPress Developer Resources — Metadata: https://developer.wordpress.org/plugins/metadata/
-4. WordPress Developer Resources — Shortcodes: https://developer.wordpress.org/plugins/shortcodes/
-5. WordPress Code Reference — register_post_type(): https://developer.wordpress.org/reference/functions/register_post_type/
-6. WordPress Code Reference — register_taxonomy(): https://developer.wordpress.org/reference/functions/register_taxonomy/
+1. WordPress Developer Resources - Custom Post Types: https://developer.wordpress.org/plugins/post-types/
+2. WordPress Developer Resources - Taxonomies: https://developer.wordpress.org/plugins/taxonomies/
+3. WordPress Developer Resources - Metadata: https://developer.wordpress.org/plugins/metadata/
+4. WordPress Developer Resources - Shortcodes: https://developer.wordpress.org/plugins/shortcodes/
+5. WordPress Code Reference - register_post_type(): https://developer.wordpress.org/reference/functions/register_post_type/
+6. WordPress Code Reference - register_taxonomy(): https://developer.wordpress.org/reference/functions/register_taxonomy/
